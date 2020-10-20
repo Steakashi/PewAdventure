@@ -28,6 +28,7 @@ public class Bullet : MonoBehaviour
         {
             //If the GameObject has the same tag as specified, output this message in the console
             collision.gameObject.GetComponent<HealthBar>().SubstractLifePoints(damages);
+            Debug.Log(collision.gameObject);
             Destroy(gameObject, 0);
             
         }

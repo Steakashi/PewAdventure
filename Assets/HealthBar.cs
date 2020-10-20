@@ -7,7 +7,9 @@ public class HealthBar : MonoBehaviour
 {
 
     public int maxLifePoints;
-    public Slider healthBarUI;
+    public Slider healthBarSlider;
+    public Image healthBarImage;
+    public Gradient healthBarColor;
 
     private int lifePoints;
 
@@ -15,7 +17,7 @@ public class HealthBar : MonoBehaviour
     void Start()
     {
         lifePoints = maxLifePoints;
-        healthBarUI.value = 1;
+        healthBarSlider.value = 1;
     }
 
     bool IsDead()
@@ -28,13 +30,20 @@ public class HealthBar : MonoBehaviour
         return lifePoints >= maxLifePoints ? true : false;
     }
 
+    void updateHealthBarColor(float ratio)
+    {
+        healthBarImage.color = healthBarColor.Evaluate(ratio);
+    }
+
     void UpdateHealthBarUI()
     {
-        if (IsDead()) { healthBarUI.value = 0; }
-        else if (MaxHealthReached()) { healthBarUI.value = 1; }
+        if (IsDead()) { healthBarSlider.value = 0; }
+        else if (MaxHealthReached()) { healthBarSlider.value = 1; }
         else {
-            healthBarUI.value = (float)(lifePoints) / (float)(maxLifePoints);
-            Debug.Log(healthBarUI.value);
+            var ratio = (float)(lifePoints) / (float)(maxLifePoints);
+            healthBarSlider.value = ratio;
+
+            if (healthBarImage != null) { updateHealthBarColor(ratio); }
         }
     }
 
@@ -46,7 +55,6 @@ public class HealthBar : MonoBehaviour
 
     public void SubstractLifePoints(int value)
     {
-        Debug.Log(lifePoints);
         lifePoints -= value;
         UpdateHealthBarUI();
         if (IsDead())
