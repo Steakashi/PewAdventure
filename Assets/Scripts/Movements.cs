@@ -30,14 +30,13 @@ public class Movements : MonoBehaviour
 
     Vector3 click_position;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         squaredSpeedLimit = speedLimit * speedLimit;
         dragTimeEnd = -dragTime;
     }
 
-    // Update is called once per frame
     void Update()
     {
         var ratio = Mathf.Clamp((Time.time - dragTimeEnd) / 2, 0, 1);
@@ -68,7 +67,7 @@ public class Movements : MonoBehaviour
 
     void OnMouseDown()
     {
-        // When user click on character for the first time, we store the mouse position for later calculations.
+
         click_position = Input.mousePosition;
         dragTimeStart = Time.time;
 
@@ -78,13 +77,6 @@ public class Movements : MonoBehaviour
     {
 
         if (!(canDrag)) { return; }
-
-        // Drag is beginning : at this point we juste display a visual element for displaying force level which will be applied later.
-        //var screen_drag_ratio = Mathf.Clamp((Vector2.Distance(Input.mousePosition, click_position) / Mathf.Min(Screen.width, Screen.height) * .5f * dragDistanceMax), 0, 1);
-        //Debug.Log(Vector2.Distance(Input.mousePosition, click_position));
-        //Debug.Log(Mathf.Min(Screen.width, Screen.height) * .5f * dragDistanceMax);
-
-        //Debug.Log(Mathf.Clamp((Vector2.Distance(Input.mousePosition, click_position) / (Mathf.Min(Screen.width, Screen.height) * .5f * dragDistanceMax))), 0, 1);
 
         var apparitionRatio = (Time.time - dragTimeStart) * circleTimeApparitionSpeed;
         var forceRotation = CalculateForceRotation();
@@ -110,35 +102,20 @@ public class Movements : MonoBehaviour
 
         if (!(canDrag)) { return; }
 
-        // Player has released the mouse button : it is now time to launch the character.
-        // Current mouse position is substract to previous recorded mouse position and clamped (following characters properties).
         circle.transform.localScale = Vector3.zero;
         arrow.transform.localScale = Vector3.zero;
 
         var forceApplied = CalculateForceRotation().normalized * force * CalculateForceRatio();
 
-        //Debug.Log(forceApplied.magnitude);
-
-       
-
         if (rb.velocity.sqrMagnitude > squaredSpeedLimit) { return; }
         else
         {
             if ((rb.velocity.sqrMagnitude + forceApplied.sqrMagnitude) > squaredSpeedLimit) {
-                /*
-                Debug.Log(forceApplied);
-                Debug.Log(forceApplied.sqrMagnitude);
-                Debug.Log(rb.velocity.sqrMagnitude);
-                Debug.Log(squaredForceLimit);
-                */
+
                 forceApplied = forceApplied * (float)((squaredSpeedLimit - rb.velocity.sqrMagnitude) / forceApplied.sqrMagnitude);
-                /*
-                Debug.Log(squaredSpeedLimit);
-                Debug.Log(rb.velocity.sqrMagnitude);
-                Debug.Log(forceApplied.sqrMagnitude);*/
+
             }
 
-           //Debug.Log(forceApplied.magnitude);
             rb.velocity = new Vector3();
             rb.AddForce(forceApplied, ForceMode.Impulse);
 
@@ -146,7 +123,6 @@ public class Movements : MonoBehaviour
             canDrag = false;
         }
 
-
-        //rb.velocity = Vector3.ClampMagnitude(rb.velocity, forceLimit);
+      
     }
 }
