@@ -6,9 +6,11 @@ public class Gravity : MonoBehaviour
 {
 
     public Rigidbody rb;
+    public Collider playerBody;
+    public float equilibriumPoint;
+    public bool stabilizePlayer;
 
     private int layerMask = 1 << 8;
-    private float equilibriumPoint = 3.0f;
     private float raycastLength;
     private float stableUpForceMax = 10.0f;
     private float StabilizedVelocity = 10.0f;
@@ -16,13 +18,17 @@ public class Gravity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.raycastLength = equilibriumPoint + 2.0f;
+        this.raycastLength = equilibriumPoint * 2;
     }
 
 
     void TiltFromGround(RaycastHit hit)
     {
         var reflected = Vector3.Reflect(transform.forward, hit.normal);
+
+        // Gradually lower angular velocity of player to make him face the path he follows
+        if (rb.angularVelocity.sqrMagnitude > .5) { rb.angularVelocity *= 0.95f; }
+
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             Quaternion.LookRotation(
@@ -48,13 +54,12 @@ public class Gravity : MonoBehaviour
 
     void StabilizePlayer()
     {
-        Debug.Log(rb.velocity.sqrMagnitude);
         if (rb.velocity.sqrMagnitude > (StabilizedVelocity * StabilizedVelocity))
         {
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 Quaternion.LookRotation(rb.velocity),
-                0.1f
+                1f
             );
         }
     }
@@ -68,7 +73,8 @@ public class Gravity : MonoBehaviour
         {
 
             PushPlayerUp(hit);
-            StabilizePlayer();
+            if (stabilizePlayer){ StabilizePlayer();}
+            
             TiltFromGround(hit);
 
         }

@@ -17,7 +17,7 @@ public class CameraFollowingCharacter : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         transform.position = Vector3.Slerp(transform.position, base_position + mainPlayer.transform.position, Time.deltaTime * speed);
         

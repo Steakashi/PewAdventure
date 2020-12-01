@@ -55,6 +55,7 @@ public class HealthBar : MonoBehaviour
 
     public void SubstractLifePoints(int value)
     {
+        Debug.Log("SubstractLifePoints");
         lifePoints -= value;
         UpdateHealthBarUI();
         if (IsDead())

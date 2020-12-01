@@ -55,6 +55,8 @@ public class BasicWeapon : MonoBehaviour
                 transform.position + (missileDirection * 2) + (Vector3.up * 1),
                 Quaternion.LookRotation(missileDirection)
             ) as GameObject;
+            bullet.GetComponent<Bullet>().AssignTarget("Enemy");
+            bullet.GetComponent<Bullet>().setDamages(FireDamages);
             bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 10 * FireSpeed);
         }
 

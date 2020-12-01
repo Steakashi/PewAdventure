@@ -26,7 +26,6 @@ public class Movements : MonoBehaviour
     private float dragTimeStart;
     private float dragTimeEnd;
     private bool canDrag = true;
-  
 
     Vector3 click_position;
 
@@ -39,7 +38,7 @@ public class Movements : MonoBehaviour
 
     void Update()
     {
-        var ratio = Mathf.Clamp((Time.time - dragTimeEnd) / 2, 0, 1);
+        var ratio = Mathf.Clamp((Time.time - dragTimeEnd) / dragTime, 0, 1);
         dragBarUI.color = DragBarColor.Evaluate(ratio);
         dragBarUI.transform.localScale = new Vector2(ratio, 1);
         if (ratio == 1){ canDrag = true; }
@@ -118,9 +117,12 @@ public class Movements : MonoBehaviour
 
             rb.velocity = new Vector3();
             rb.AddForce(forceApplied, ForceMode.Impulse);
-
+            
             dragTimeEnd = Time.time;
             canDrag = false;
+
+            
+
         }
 
       
