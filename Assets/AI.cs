@@ -111,7 +111,7 @@ public class AI : MonoBehaviour
             fromPositionToPlayer.x,
             0,
             fromPositionToPlayer.z
-        ).normalized * (acceleration / 10);
+        ).normalized * (acceleration);
         Vector3 rotationApplied = Vector3.zero;
 
         
@@ -157,15 +157,14 @@ public class AI : MonoBehaviour
         bullet.GetComponent<Bullet>().setDamages(fireDamages);
         bullet.GetComponent<Rigidbody>().AddForce(fromPositionToPlayer.normalized * 10 * fireSpeed);
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    void FixedUpdate()
     {
         Vector3 fromPositionToPlayer = Target.position - transform.position;
 
         agent.Warp(transform.position);
         agent.destination = Target.position;
-
+        
         if (!(CloseEnough(fromPositionToPlayer))) {
             rb.velocity *= 0.99f;
         }

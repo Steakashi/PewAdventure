@@ -26,6 +26,8 @@ public class Movements : MonoBehaviour
     private float dragTimeStart;
     private float dragTimeEnd;
     private bool canDrag = true;
+    private bool forceNeedsToBeApplied = false;
+    private Vector3 forceToApply;
 
     Vector3 click_position;
 
@@ -104,27 +106,32 @@ public class Movements : MonoBehaviour
         circle.transform.localScale = Vector3.zero;
         arrow.transform.localScale = Vector3.zero;
 
-        var forceApplied = CalculateForceRotation().normalized * force * CalculateForceRatio();
+        forceToApply = CalculateForceRotation().normalized * force * CalculateForceRatio();
 
         if (rb.velocity.sqrMagnitude > squaredSpeedLimit) { return; }
         else
         {
-            if ((rb.velocity.sqrMagnitude + forceApplied.sqrMagnitude) > squaredSpeedLimit) {
+            if ((rb.velocity.sqrMagnitude + forceToApply.sqrMagnitude) > squaredSpeedLimit) {
 
-                forceApplied = forceApplied * (float)((squaredSpeedLimit - rb.velocity.sqrMagnitude) / forceApplied.sqrMagnitude);
+                forceToApply = forceToApply * (float)((squaredSpeedLimit - rb.velocity.sqrMagnitude) / forceToApply.sqrMagnitude);
 
             }
 
             rb.velocity = new Vector3();
-            rb.AddForce(forceApplied, ForceMode.Impulse);
             
+            forceNeedsToBeApplied = true;
             dragTimeEnd = Time.time;
-            canDrag = false;
+            canDrag = false;     
 
-            
+        }                 
+    }
 
+    void FixedUpdate()
+    {
+        if (forceNeedsToBeApplied)
+        {
+            rb.AddForce(forceToApply, ForceMode.Impulse);
+            forceNeedsToBeApplied = false;
         }
-
-      
     }
 }

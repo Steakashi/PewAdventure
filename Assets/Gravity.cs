@@ -12,8 +12,10 @@ public class Gravity : MonoBehaviour
 
     private int layerMask = 1 << 8;
     private float raycastLength;
-    private float stableUpForceMax = 10.0f;
+    private float stableUpForceMax = 40.0f;
     private float StabilizedVelocity = 10.0f;
+    private Vector3 memorizedForce;
+
 
     // Start is called before the first frame update
     void Start()
@@ -65,7 +67,7 @@ public class Gravity : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         RaycastHit hit;
         Debug.DrawRay(transform.position, Vector3.down * raycastLength, Color.yellow);
