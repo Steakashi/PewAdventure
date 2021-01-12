@@ -2568,16 +2568,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Target: {fileID: 357148380}
   acceleration: 10
-  maxSpeed: 50
-  angularSpeed: 50
+  maxSpeed: 40
+  angularSpeed: 200
   startPursuit: 80
   startRotating: 20
   speedRotating: 20
   maximumShootingAngle: 90
   maximumShootingDistance: 10
   sideVisibility: 1
-  safetyRange: 10
-  safetyForce: 5
+  safetyRange: 20
+  safetyForce: 10
   projectile: {fileID: 1259865673663102, guid: 8b227e0429c621940acb9e2e8d18d12f, type: 3}
   fireDamages: 10
   fireSpeed: 400

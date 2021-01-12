@@ -71,6 +71,8 @@ public class AI : MonoBehaviour
             0,
             rb.velocity.normalized.z
         );
+        Debug.DrawRay(transform.position + (flattened_velocity * safetyRange), Vector3.down * 50, Color.red);
+        Debug.Log(!(Physics.Raycast(transform.position + (flattened_velocity * safetyRange), Vector3.down, out hit, Mathf.Infinity, layerMask)));
         return !(Physics.Raycast(transform.position + (flattened_velocity * safetyRange), Vector3.down, out hit, Mathf.Infinity, layerMask));
     }
 
@@ -102,6 +104,13 @@ public class AI : MonoBehaviour
     {
 
         return transform.right * turningDirection * (speedRotating / 10);
+    }
+
+    void ApplySafety()
+    {
+        Vector3 safetyForceApplied = -(rb.velocity.normalized * (safetyForce));
+        rb.AddForce(safetyForceApplied);
+        Debug.DrawRay(transform.position, safetyForceApplied, Color.cyan);
     }
 
     void ApplyMovement(Vector3 fromPositionToPlayer)
@@ -168,7 +177,7 @@ public class AI : MonoBehaviour
         if (!(CloseEnough(fromPositionToPlayer))) {
             rb.velocity *= 0.99f;
         }
-        else if (ObstacleDetected()){ rb.AddForce(-(rb.velocity.normalized * (safetyForce / 10))); }
+        else if (ObstacleDetected()){ ApplySafety(); }
         else
         {
 
