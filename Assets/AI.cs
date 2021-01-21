@@ -27,7 +27,7 @@ public class AI : MonoBehaviour
     public int fireSpeed;
     public float fireRate;
 
-    private  NavMeshAgent agent;
+    private NavMeshAgent agent;
     private Rigidbody rb;
     private float weightedDistanceToTarget;
     private float maximumSqrShootingDistance;
@@ -41,6 +41,7 @@ public class AI : MonoBehaviour
     private int turningDirection = 1;
 
     private bool canShoot;
+    private bool canMove = true;
 
     void Start()
     {
@@ -72,7 +73,6 @@ public class AI : MonoBehaviour
             rb.velocity.normalized.z
         );
         Debug.DrawRay(transform.position + (flattened_velocity * safetyRange), Vector3.down * 50, Color.red);
-        Debug.Log(!(Physics.Raycast(transform.position + (flattened_velocity * safetyRange), Vector3.down, out hit, Mathf.Infinity, layerMask)));
         return !(Physics.Raycast(transform.position + (flattened_velocity * safetyRange), Vector3.down, out hit, Mathf.Infinity, layerMask));
     }
 
@@ -169,6 +169,9 @@ public class AI : MonoBehaviour
     
     void FixedUpdate()
     {
+
+        if (!(canMove)){ return; }
+
         Vector3 fromPositionToPlayer = Target.position - transform.position;
 
         agent.Warp(transform.position);
@@ -200,5 +203,19 @@ public class AI : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other){ turningDirection *= -1;}
+
+    public IEnumerator deactivate()
+    {
+        agent.enabled = false;
+        canMove = false;
+        yield return null;
+        while (rb.velocity.sqrMagnitude > 0.01)
+        {
+            rb.velocity /= 1.005f;
+            yield return null;
+
+        }
+
+    }
 
 }

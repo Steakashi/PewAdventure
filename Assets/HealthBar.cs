@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.AI;
 
 public class HealthBar : MonoBehaviour
 {
@@ -10,12 +12,15 @@ public class HealthBar : MonoBehaviour
     public Slider healthBarSlider;
     public Image healthBarImage;
     public Gradient healthBarColor;
+    public GameObject explosionEffect;
 
     private int lifePoints;
+    private NavMeshAgent agent;
 
     // Start is called before the first frame update
     void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
         lifePoints = maxLifePoints;
         healthBarSlider.value = 1;
     }
@@ -53,6 +58,37 @@ public class HealthBar : MonoBehaviour
         else { lifePoints += value; }
     }
 
+    IEnumerator deathAnimation()
+    {
+        while (transform.localScale.sqrMagnitude > 0.01) {
+            transform.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+            yield return null;
+
+        }
+
+        Destroy(gameObject, 0);
+
+    }
+
+    public void kill()
+    {
+        GameObject explosion = Instantiate(explosionEffect);
+        explosion.transform.position = transform.position;
+        GetComponent<Gravity>().enabled = false;
+
+        if (this.gameObject.tag == "Player")
+        {
+            GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GameManager>().lose();
+        }
+        else
+        {
+            GetComponent<AI>().enabled = false;
+            agent.enabled = false;
+            StartCoroutine("deathAnimation");
+        }
+
+    }
+
     public void SubstractLifePoints(int value)
     {
         Debug.Log("SubstractLifePoints");
@@ -60,7 +96,7 @@ public class HealthBar : MonoBehaviour
         UpdateHealthBarUI();
         if (IsDead())
         {
-            Destroy(gameObject, 0);
+            kill();
         }
     }
 
