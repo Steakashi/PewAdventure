@@ -61,7 +61,7 @@ public class HealthBar : MonoBehaviour
     IEnumerator deathAnimation()
     {
         while (transform.localScale.sqrMagnitude > 0.01) {
-            transform.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+            transform.localScale -= new Vector3(0.001f, 0.001f, 0.001f);
             yield return null;
 
         }
@@ -78,6 +78,8 @@ public class HealthBar : MonoBehaviour
 
         if (this.gameObject.tag == "Player")
         {
+            GetComponent<Movements>().enabled = false;
+            GetComponent<BasicWeapon>().enabled = false;
             GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GameManager>().lose();
         }
         else
@@ -91,7 +93,6 @@ public class HealthBar : MonoBehaviour
 
     public void SubstractLifePoints(int value)
     {
-        Debug.Log("SubstractLifePoints");
         lifePoints -= value;
         UpdateHealthBarUI();
         if (IsDead())

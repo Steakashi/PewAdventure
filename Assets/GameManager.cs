@@ -5,12 +5,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
+    public bool isPlaying = true;
+
     public void lose()
     {
-        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        isPlaying = false;
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             StartCoroutine(enemy.GetComponent<AI>().deactivate());
         }
+        
     }
 
     // Start is called before the first frame update
