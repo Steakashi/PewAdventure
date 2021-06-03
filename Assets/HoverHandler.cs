@@ -10,17 +10,22 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public AlternativeWeapon alternativeWeapon;
     public AlternativeWeaponHandler alternativeWeaponHandler;
 
+    private GraphicsManager vision;
     private bool abort = false;
-    private float timeToValidate = .5f;
+    private float timeToValidate = .3f;
+
+    void Start()
+    {
+        vision = GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GraphicsManager>();
+    }
 
     IEnumerator Validate()
     {
-        yield return new WaitForSeconds(timeToValidate);
+        yield return new WaitForSeconds(vision.ponderate(timeToValidate));
 
         if (abort) { abort = false; }
         else
         {
-            Debug.Log("Triggered");
             alternativeWeapon.Trigger();
             alternativeWeaponHandler.Exit();
         }

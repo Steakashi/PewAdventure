@@ -27,7 +27,7 @@ public class Movements : MonoBehaviour
     public float dragTime;
 
     const float dragDistanceMax = .8f; // Correspond to a ratio multiplied by the narrower screen part size
-    const int dragDistanceMin = 40;
+    const int dragDistanceMin = 20;
     const float dragTimeWeapons = .2f;
     const int circleTimeApparitionSpeed = 4;
 
@@ -38,9 +38,11 @@ public class Movements : MonoBehaviour
     private float clickTime;
     private bool canDrag = true;
     private bool doubleTapTriggered = false;
+    private bool longTapTriggered = false;
     private bool forceNeedsToBeApplied = false;
     private bool dragDistanceMinReached = false;
     private Vector3 forceToApply;
+    private GraphicsManager vision;
 
     Vector3 click_position;
 
@@ -50,6 +52,7 @@ public class Movements : MonoBehaviour
         squaredSpeedLimit = speedLimit * speedLimit;
         squaredDragDistanceMin = dragDistanceMin * dragDistanceMin;
         dragTimeEnd = -dragTime;
+        vision = GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GraphicsManager>();
     }
 
     void Update()
@@ -102,15 +105,15 @@ public class Movements : MonoBehaviour
 
     void OnMouseDrag()
     {
-  
-        if (!(canDrag) || !(gameManager.isPlaying) || weaponHandler.IsActive()) { return; }
+        if (!(canDrag) || longTapTriggered || !(gameManager.isPlaying) || weaponHandler.IsActive()) { return; }
 
-        var apparitionRatio = (Time.time - dragTimeStart) * circleTimeApparitionSpeed;
+        var apparitionRatio = vision.ponderate((Time.time - dragTimeStart) * circleTimeApparitionSpeed, false);
         var forceRotation = CalculateForceRotation();
 
         // All the conditions are meet to enable character's dragging
         if (ShouldDragCharacter(forceRotation.sqrMagnitude))
         {
+            vision.slow();
             dragDistanceMinReached = true;
             circle.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, apparitionRatio);
             arrow.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, Mathf.Min(CalculateForceRatio(), apparitionRatio));
@@ -132,6 +135,7 @@ public class Movements : MonoBehaviour
             // If minimum drag distance is not reached, and if user has pressed the screen long enough, then we consider user action as a long click, and therefore open weapons menu
             if (CanOpenWeapons())
             {
+                longTapTriggered = true;
                 weaponHandler.Enter();
             }
         }
@@ -141,6 +145,9 @@ public class Movements : MonoBehaviour
     void OnMouseUp()
     {
         weaponHandler.Exit();
+        vision.restore();
+
+        longTapTriggered = false;
         if (!(canDrag) || !(gameManager.isPlaying)) { return; }
         if (!(dragDistanceMinReached)) { return; }
 

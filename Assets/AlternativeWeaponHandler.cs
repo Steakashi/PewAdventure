@@ -8,6 +8,12 @@ public class AlternativeWeaponHandler : MonoBehaviour
     public GameObject weapons;
 
     private bool active = false;
+    private GraphicsManager vision;
+
+    void Start()
+    {
+        vision = GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GraphicsManager>();
+    }
 
     public bool IsActive() { return active; }
 
@@ -15,11 +21,13 @@ public class AlternativeWeaponHandler : MonoBehaviour
     {
         active = true;
         weapons.SetActive(true);
+        vision.slow();
     }
 
     public void Exit()
     {
         active = false;
         weapons.SetActive(false);
+        vision.restore();
     }
 }
